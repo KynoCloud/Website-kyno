@@ -64,4 +64,41 @@ class User extends Authenticatable
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    public function servers()
+    {
+        return $this->hasMany(Server::class);
+    }
+
+    public function highestRole()
+    {
+        return $this->roles
+            ->sortByDesc(fn ($role) => config('roles')[$role->name] ?? 0)
+            ->first();
+    }
+
+    public function roleLevel(): int
+    {
+        return config('roles')[$this->highestRole()?->name] ?? 0;
+    }
+
+    public function listRoles(): string
+    {
+        $roles = $this->roles->pluck('name')->toArray();
+        $mainRole = $this->roles
+            ->sortByDesc(fn($role) => config('roles')[$role->name] ?? 0)
+            ->first()?->name;
+
+        $list = [];
+        if ($mainRole) {
+            $list[] = $mainRole;
+        }
+
+        if (in_array('premium', $roles) && $mainRole !== 'premium') {
+            $list[] = 'premium';
+        }
+
+        return implode(', ', $list);
+    }
+
 }
