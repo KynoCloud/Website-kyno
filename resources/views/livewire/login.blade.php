@@ -37,7 +37,7 @@
         <div class="login-header nocopy">
             <div class="logo">
                 <div class="logo-icon"></div>
-                <div class="logo-text"><b>Kyno Cloud</b></div>
+                <div class="logo-text"><b>KynoCloud</b></div>
             </div>
 
             <h2 class="login-title">Sign in to your dashboard</h2>
@@ -45,17 +45,21 @@
         </div>
 
         <!-- 🔥 SINGLE FORM ONLY -->
-        <form wire:submit.prevent="authenticate">
+        <form wire:submit.prevent="authenticate" novalidate autocomplete="off">
 
             <div class="form-group">
-                <label class="form-label nocopy">Email Address</label>
+                <label class="form-label nocopy" for="email">Email Address</label>
                 <input
+                    id="email"
                     type="email"
-                    class="form-input"
+                    class="form-input @error('email') error @enderror"
                     placeholder="you@example.com"
                     wire:model.defer="email"
                     required
                 >
+            @error('email')
+                <span class="error-message nocopy">{{ $message }}</span>
+            @enderror
             </div>
 
             <div class="form-group">
@@ -67,6 +71,9 @@
                     wire:model.defer="password"
                     required
                 >
+            @error('password')
+                <span class="error-message nocopy">{{ $message }}</span>
+            @enderror
             </div>
 
             <div class="form-options nocopy">

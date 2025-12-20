@@ -17,6 +17,7 @@ class Login extends Component
     public function authenticate()
     {
         $validated = $this->validate([
+            'email' => 'required|email',
             'password' => 'required|max:255',
         ]);
 
@@ -24,18 +25,38 @@ class Login extends Component
 
         if (!$user) {
             LivewireAlert::title('Error')
-                ->text('The email or password is invalid 😔')
+                ->text('The email or password is invalid ')
                 ->error()
                 ->show();
             return;
         }
 
         // Check if banned
-        if ($user->banned_at) {
+        if ($user->isBanned()) {
+            $ban = $user->bans()->whereNull('deleted_at') // ignore soft-deleted
+                                ->where(function($q) {
+                                    $q->whereNull('expired_at')
+                                    ->orWhere('expired_at', '>', now());
+                                })
+                                ->latest()
+                                ->first();
+            $reason = $ban?->comment;
+
+            $duration = $ban && $ban->isPermanent()
+                ? 'Permanent'
+                : 'Until ' . $ban->expired_at->format('Y-m-d H:i');
+
+            $message = "You are banned from the platform.<br>";
+            if ($reason) {
+                $message .= "Reason: {$reason}.<br>";
+            }
+            $message .= "Duration: {$duration}.";
+
             LivewireAlert::title('Banned ❌')
-                ->text('You are banned from the platform.' . ($user->ban_reason ? " Reason: {$user->ban_reason}" : ''))
+                ->text($message)
                 ->error()
                 ->show();
+
             return;
         }
 
@@ -45,7 +66,7 @@ class Login extends Component
             'password' => $validated['password']
         ], $this->remember ?? false)) {
             LivewireAlert::title('Error')
-                ->text('The email or password is invalid 😔')
+                ->text('The email or password is invalid')
                 ->error()
                 ->show();
             return;
@@ -54,7 +75,7 @@ class Login extends Component
         session()->regenerate();
 
         LivewireAlert::title('Success')
-            ->text('Welcome back, ' . $user->name . ' 👋')
+            ->text('Welcome back, ' . $user->name . '!')
             ->success()
             ->show();
 

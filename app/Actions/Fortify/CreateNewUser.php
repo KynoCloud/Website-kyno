@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -30,14 +31,30 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
+        // Create user with hashed password
         $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
-            'password' => $input['password'],
+            'password' => $input['password'], // Password is hashed via model cast
         ]);
 
-        $user->assignRole('user');
-        
+        // Assign default role
+
         return $user;
+    }
+
+    /**
+     * Get the user's initials
+     */
+    public function getInitials(): string
+    {
+        $names = explode(' ', $this->name);
+        $initials = '';
+
+        foreach ($names as $name) {
+            $initials .= strtoupper($name[0]);
+        }
+
+        return $initials;
     }
 }

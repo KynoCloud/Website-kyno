@@ -31,7 +31,8 @@ body {
 /* ============= LEFT PANEL - HERO SECTION ============= */
 .left-panel {
     flex: 1;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(30, 64, 175, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(30, 64, 175, 0.1) 0%);
+    backdrop-filter: blur(10px);
     padding: 60px;
     display: flex;
     flex-direction: column;
@@ -48,8 +49,8 @@ body {
     right: 0;
     bottom: 0;
     background: 
-        radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(30, 64, 175, 0.15) 0%, transparent 50%);
+        radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 25%),
+        radial-gradient(circle at 80% 70%, rgba(30, 64, 175, 0.15) 0%, transparent 25%);
     z-index: 1;
 }
 
@@ -688,4 +689,36 @@ body {
         radial-gradient(circle at 80% 70%, rgba(236,72,153,0.18), transparent 45%);
     filter: blur(80px);
     z-index: -1;
+}
+
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-hint {
+    margin-bottom: 12px;
+    padding: 12px 12px;
+    background: linear-gradient(135deg, #1b1f2e, #121825);
+    border-left: 4px solid #5cb1f6; 
+    border-radius: 10px;
+    color: #cbd5f5;
+    font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.password-hint p {
+    margin: 0 0 5px;
+    font-weight: 400;
+    color: #e5e7ff;
+}
+
+.password-hint ul {
+    margin: 0;
+    padding-left: 12px;
+}
+
+.password-hint li {
+    margin-bottom: 7px;
+    opacity: 0.9;
 }

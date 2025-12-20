@@ -61,11 +61,17 @@ class User extends Authenticatable implements BannableInterface
 
     public function topRole(): ?string
     {
-        $role = $this->roles()
-            ->orderBy('id', 'asc') // lower ID = higher priority
-            ->first();
+        $priority = ['system','superadmin','developer','admin','staff','tester','customer','user'];
+        
+        $roles = $this->getRoleNames()->toArray(); // Spatie helper
+        
+        foreach ($priority as $roleName) {
+            if (in_array($roleName, $roles)) {
+                return ucfirst($roleName);
+            }
+        }
 
-        return $role ? ucfirst($role->name) : null;
+        return null;
     }
 
     public function isBanned(): bool
