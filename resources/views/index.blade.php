@@ -28,12 +28,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="welcome-container nocopy">
-        <div class="background-effects">
-            <div class="grid-bg"></div>
-            <div class="floating-orb orb-1"></div>
-            <div class="floating-orb orb-2"></div>
-            <div class="floating-orb orb-3"></div>
+    <div class="bg-animation"></div>
+    <div class="particles-container" id="particles"></div>
+    
+    <!-- Floating Elements -->
+    <div class="floating-element" style="width: 400px; height: 400px; top: 10%; left: 5%;"></div>
+    <div class="floating-element" style="width: 300px; height: 300px; bottom: 10%; right: 5%;"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-cloud"></i>
+                KynoCloud
         </div>
 
         <nav class="welcome-nav">
