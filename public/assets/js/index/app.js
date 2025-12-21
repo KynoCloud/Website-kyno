@@ -1,333 +1,233 @@
-// ============= WELCOME PAGE INTERACTIONS =============
+function createParticles() {
+    const container = document.getElementById('particles');
+    const particleCount = 40;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        const size = Math.random() * 80 + 20;
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const duration = Math.random() * 20 + 15;
+        const delay = Math.random() * 5;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${left}%`;
+        particle.style.top = `${top}%`;
+        particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+        
+        container.appendChild(particle);
+    }
+}
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all welcome page functionality
-    initWelcomePage();
+// Tab switching functionality
+const loginTab = document.getElementById('login-tab');
+const registerTab = document.getElementById('register-tab');
+const loginForm = document.getElementById('login-form');
+const registerForm = document.getElementById('register-form');
+const authTitle = document.getElementById('auth-title');
+const authSubtitle = document.getElementById('auth-subtitle');
+const toRegister = document.getElementById('to-register');
+const toLogin = document.getElementById('to-login');
+
+function switchToLogin() {
+    loginTab.classList.add('active');
+    registerTab.classList.remove('active');
+    loginForm.classList.add('active');
+    registerForm.classList.remove('active');
+    authTitle.textContent = 'Welcome Back';
+    authSubtitle.textContent = 'Sign in to access your server dashboard';
+}
+
+function switchToRegister() {
+    registerTab.classList.add('active');
+    loginTab.classList.remove('active');
+    registerForm.classList.add('active');
+    loginForm.classList.remove('active');
+    authTitle.textContent = 'Start Your Journey';
+    authSubtitle.textContent = 'Create your KynoCloud account in seconds';
+}
+
+loginTab.addEventListener('click', switchToLogin);
+toLogin.addEventListener('click', switchToLogin);
+registerTab.addEventListener('click', switchToRegister);
+toRegister.addEventListener('click', switchToRegister);
+
+// Password toggle functionality
+function setupPasswordToggle(toggleId, passwordId) {
+    const toggle = document.getElementById(toggleId);
+    const password = document.getElementById(passwordId);
+    let isVisible = false;
+    
+    toggle.addEventListener('click', () => {
+        isVisible = !isVisible;
+        password.type = isVisible ? 'text' : 'password';
+        toggle.innerHTML = isVisible ? 
+            '<i class="fas fa-eye-slash"></i>' : 
+            '<i class="fas fa-eye"></i>';
+    });
+}
+
+setupPasswordToggle('login-toggle', 'login-password');
+setupPasswordToggle('register-toggle', 'register-password');
+
+// Checkbox functionality
+function setupCheckbox(checkboxId) {
+    const checkbox = document.getElementById(checkboxId);
+    
+    checkbox.addEventListener('click', () => {
+        checkbox.classList.toggle('checked');
+    });
+}
+
+setupCheckbox('remember-check');
+setupCheckbox('terms-check');
+
+// Password validation
+const passwordInput = document.getElementById('register-password');
+const reqLength = document.getElementById('req-length');
+const reqLowercase = document.getElementById('req-lowercase');
+const reqNumber = document.getElementById('req-number');
+const reqUppercase = document.getElementById('req-uppercase');
+
+function validatePassword(password) {
+    const hasLength = password.length >= 8;
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    
+    // Update requirement indicators
+    updateRequirement(reqLength, hasLength);
+    updateRequirement(reqLowercase, hasLowercase);
+    updateRequirement(reqNumber, hasNumber);
+    updateRequirement(reqUppercase, hasUppercase);
+    
+    return hasLength && hasLowercase && hasNumber && hasUppercase;
+}
+
+function updateRequirement(element, isValid) {
+    if (isValid) {
+        element.classList.add('valid');
+        element.innerHTML = '<i class="fas fa-check-circle"></i> ' + element.textContent.replace('•', '');
+    } else {
+        element.classList.remove('valid');
+        element.innerHTML = '<i class="fas fa-circle"></i> ' + element.textContent.replace('✓', '');
+    }
+}
+
+passwordInput.addEventListener('input', () => {
+    validatePassword(passwordInput.value);
 });
 
-function initWelcomePage() {
-    // Initialize button glow effects
-    initButtonGlowEffects();
-    
-    // Initialize smooth scrolling
-    initSmoothScrolling();
-    
-    // Initialize stats counter animation
-    initStatsCounter();
-    
-    // Initialize feature hover effects
-    initFeatureHoverEffects();
-    
-    // Initialize typing effect for demo
-    initTypingEffect();
-}
+// Email confirmation validation
+const emailInput = document.getElementById('register-email');
+const emailConfirmInput = document.getElementById('register-email-confirm');
 
-// ============= BUTTON GLOW EFFECTS =============
-function initButtonGlowEffects() {
-    const buttons = document.querySelectorAll('.primary-button, .nav-button, .cta-button.primary');
-    
-    buttons.forEach(btn => {
-        btn.addEventListener('mousemove', e => {
-            const rect = btn.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            
-            btn.style.setProperty('--mouse-x', `${x}%`);
-            btn.style.setProperty('--mouse-y', `${y}%`);
-        });
-        
-        // Add CSS for dynamic glow
-        const style = document.createElement('style');
-        style.textContent = `
-            .primary-button, .nav-button, .cta-button.primary {
-                position: relative;
-                overflow: hidden;
-                z-index: 1;
-            }
-            
-            .primary-button::before, .nav-button::before, .cta-button.primary::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: radial-gradient(
-                    circle 150px at var(--mouse-x, 50%) var(--mouse-y, 50%),
-                    rgba(255, 170, 64, 0.4) 0%,
-                    rgba(255, 170, 64, 0.2) 25%,
-                    transparent 70%
-                );
-                opacity: 0;
-                transition: opacity 0.3s ease;
-                z-index: -1;
-                pointer-events: none;
-            }
-            
-            .primary-button:hover::before, .nav-button:hover::before, .cta-button.primary:hover::before {
-                opacity: 1;
-            }
-        `;
-        document.head.appendChild(style);
-    });
-}
-
-// ============= SMOOTH SCROLLING =============
-function initSmoothScrolling() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-}
-
-// ============= STATS COUNTER ANIMATION =============
-function initStatsCounter() {
-    const statElements = document.querySelectorAll('.stat-info h3');
-    
-    if (!isElementInViewport(document.querySelector('.stats-card'))) {
-        return;
-    }
-    
-    statElements.forEach(stat => {
-        const target = parseInt(stat.textContent.replace(/[^0-9]/g, ''));
-        const suffix = stat.textContent.replace(/[0-9]/g, '');
-        
-        animateCounter(stat, 0, target, 1500, suffix);
-    });
-}
-
-function animateCounter(element, start, end, duration, suffix) {
-    let startTimestamp = null;
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        const current = Math.floor(progress * (end - start) + start);
-        
-        element.textContent = current.toLocaleString() + suffix;
-        
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
+function validateEmailConfirmation() {
+    if (emailInput.value && emailConfirmInput.value) {
+        if (emailInput.value === emailConfirmInput.value) {
+            emailConfirmInput.style.borderColor = 'var(--success)';
+            return true;
+        } else {
+            emailConfirmInput.style.borderColor = 'var(--error)';
+            return false;
         }
-    };
-    window.requestAnimationFrame(step);
+    }
+    return false;
 }
 
-function isElementInViewport(el) {
-    const rect = el.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
-}
+emailInput.addEventListener('input', validateEmailConfirmation);
+emailConfirmInput.addEventListener('input', validateEmailConfirmation);
 
-// ============= FEATURE HOVER EFFECTS =============
-function initFeatureHoverEffects() {
-    const features = document.querySelectorAll('.feature');
+// Form submission with loading state
+function setupFormSubmit(formId, submitId, successMessage) {
+    const form = document.getElementById(formId);
+    const submitBtn = document.getElementById(submitId);
     
-    features.forEach(feature => {
-        feature.addEventListener('mousemove', e => {
-            const rect = feature.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            feature.style.setProperty('--feature-x', `${x}px`);
-            feature.style.setProperty('--feature-y', `${y}px`);
-        });
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
         
-        // Add CSS for feature glow
-        const style = document.createElement('style');
-        style.textContent = `
-            .feature {
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .feature::after {
-                content: '';
-                position: absolute;
-                top: var(--feature-y, 0);
-                left: var(--feature-x, 0);
-                width: 200px;
-                height: 200px;
-                background: radial-gradient(
-                    circle 100px at center,
-                    rgba(59, 130, 246, 0.1) 0%,
-                    transparent 70%
-                );
-                transform: translate(-50%, -50%);
-                opacity: 0;
-                transition: opacity 0.3s ease;
-                pointer-events: none;
-                z-index: 1;
-            }
-            
-            .feature:hover::after {
-                opacity: 1;
-            }
-        `;
-        document.head.appendChild(style);
-    });
-}
-
-// ============= TYPING EFFECT FOR DEMO =============
-function initTypingEffect() {
-    const demoContent = document.querySelector('.demo-content');
-    if (!demoContent) return;
-    
-    const lines = [
-        "Initializing KynoCloud Platform...",
-        "✓ Authentication System Ready",
-        "✓ Database Connection Established",
-        "✓ API Gateway Online",
-        "✓ Load Balancer Configured",
-        "✓ Security Layer Activated",
-        "Platform ready. Welcome to KynoCloud."
-    ];
-    
-    // Clear demo content
-    demoContent.innerHTML = '';
-    
-    // Create lines with typing effect
-    lines.forEach((line, index) => {
-        const lineElement = document.createElement('div');
-        lineElement.className = 'demo-line typing-line';
-        demoContent.appendChild(lineElement);
+        // Show loading state
+        submitBtn.classList.add('loading');
         
-        // Add typing effect with delay
+        // Simulate API call
         setTimeout(() => {
-            typeWriter(lineElement, line, 0);
-        }, index * 1000);
-    });
-}
-
-function typeWriter(element, text, i) {
-    if (i < text.length) {
-        element.textContent += text.charAt(i);
-        setTimeout(() => {
-            typeWriter(element, text, i + 1);
-        }, 30);
-    }
-}
-
-// ============= SCROLL REVEAL ANIMATIONS =============
-function initScrollReveal() {
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.1
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('revealed');
-            }
-        });
-    }, observerOptions);
-    
-    // Observe elements to reveal
-    document.querySelectorAll('.feature, .stat-item, .cta-section').forEach(el => {
-        observer.observe(el);
-    });
-}
-
-// ============= PARTICLE BACKGROUND =============
-function initParticles() {
-    const canvas = document.createElement('canvas');
-    canvas.className = 'particle-canvas';
-    document.querySelector('.background-effects').appendChild(canvas);
-    
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    const particles = [];
-    const particleCount = 50;
-    
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2 + 1;
-            this.speedX = Math.random() * 0.5 - 0.25;
-            this.speedY = Math.random() * 0.5 - 0.25;
-            this.color = Math.random() > 0.5 ? 'rgba(59, 130, 246, 0.3)' : 'rgba(255, 170, 64, 0.3)';
-        }
-        
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
+            submitBtn.classList.remove('loading');
             
-            if (this.x > canvas.width) this.x = 0;
-            if (this.x < 0) this.x = canvas.width;
-            if (this.y > canvas.height) this.y = 0;
-            if (this.y < 0) this.y = canvas.height;
-        }
-        
-        draw() {
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
+            // Show success message
+            const originalText = submitBtn.querySelector('.btn-text').textContent;
+            submitBtn.querySelector('.btn-text').textContent = successMessage;
+            submitBtn.style.background = 'var(--success)';
+            
+            // Reset after 2 seconds
+            setTimeout(() => {
+                submitBtn.querySelector('.btn-text').textContent = originalText;
+                submitBtn.style.background = '';
+                
+                // For demo purposes, switch to login after registration
+                if (formId === 'register-form') {
+                    switchToLogin();
+                }
+            }, 2000);
+        }, 1500);
+    });
+}
+
+setupFormSubmit('login-form', 'login-submit', 'ACCESS GRANTED');
+setupFormSubmit('register-form', 'register-submit', 'ACCOUNT CREATED');
+
+// Animated stats
+function animateStat(elementId, finalValue, suffix = '') {
+    const element = document.getElementById(elementId);
+    let currentValue = 0;
+    const increment = finalValue / 50;
     
-    // Create particles
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
+    const timer = setInterval(() => {
+        currentValue += increment;
+        if (currentValue >= finalValue) {
+            element.textContent = finalValue + suffix;
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(currentValue) + suffix;
+        }
+    }, 30);
+}
+
+// Initialize everything
+document.addEventListener('DOMContentLoaded', () => {
+    createParticles();
     
-    function animateParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        particles.forEach(particle => {
-            particle.update();
-            particle.draw();
+    // Animate stats on load
+    setTimeout(() => {
+        animateStat('server-stat', 12540);
+        animateStat('uptime-stat', 99.9, '%');
+    }, 500);
+    
+    // Add some interactive effects to form inputs
+    const formInputs = document.querySelectorAll('.form-input');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', () => {
+            input.parentElement.style.transform = 'translateY(-2px)';
         });
         
-        requestAnimationFrame(animateParticles);
-    }
-    
-    animateParticles();
-    
-    // Handle resize
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        input.addEventListener('blur', () => {
+            input.parentElement.style.transform = 'translateY(0)';
+        });
     });
-}
-
-// ============= INITIALIZE EVERYTHING =============
-function initWelcomePage() {
-    initButtonGlowEffects();
-    initSmoothScrolling();
-    initStatsCounter();
-    initFeatureHoverEffects();
-    initTypingEffect();
-    initScrollReveal();
-    initParticles();
     
-    // Listen for scroll to trigger stats counter
-    window.addEventListener('scroll', () => {
-        if (isElementInViewport(document.querySelector('.stats-card'))) {
-            initStatsCounter();
-        }
+    // Feature item hover effects
+    const featureItems = document.querySelectorAll('.feature-item');
+    featureItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            const icon = item.querySelector('.feature-icon');
+            icon.style.transform = 'scale(1.1) rotate(5deg)';
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            const icon = item.querySelector('.feature-icon');
+            icon.style.transform = 'scale(1) rotate(0)';
+        });
     });
-}
-
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', initWelcomePage);
+});
